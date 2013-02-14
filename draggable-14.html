@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>jQuery UI Draggable - Constrain movement</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+<!-- <script src="http://code.jquery.com/jquery-latest.js"></script> -->
+<style>
+#elements {
+	width: 95%;
+	height:200px;
+	border:2px solid #ccc;
+	padding: 10px;
+}
+#containment-wrapper {
+	width: 95%;
+	height:400px;
+	border:2px solid #ccc;
+	padding: 10px;
+}
+.item {
+	width: 155px;
+	height:auto;
+	border:2px solid #ccc;
+	cursor: move ;
+}
+
+.tag {
+	width: 155px;
+	height:auto;
+	border:2px solid #ccc;
+	/*cursor: move ;*/
+	padding: 0.5em;
+}
+
+.tagStyle{
+	position: absolute;
+}
+
+</style>
+<script>
+	var i =1;
+	var domtype='';
+
+	$(function() {
+
+		$(".item").draggable({revert:true});
+		$("#containment-wrapper").droppable({
+			accept: ".item",
+			activeClass: "ui-state-hover",
+			hoverClass: "ui-state-active",
+			drop: function( event, ui ) {
+				domtype = ui.draggable.attr('id');
+			$(this).append("<div id ="+domtype+i+">"+ui.draggable.html()+"</div>");
+			$("#"+domtype+i).draggable({containment: "#containment-wrapper"}).resizable();
+			$("#"+domtype+i).addClass("tag");
+
+			$(".tag").dblclick(function() {
+				elementId= $(this).attr('id');
+				$("#"+elementId).draggable("destroy").resizable("destroy");
+				elementType = elementId.replace(/[0-9]+/,'');
+				// $("#"+elementId).removeClass('tag');
+				// $("#"+elementId).addClass('tagStyle');
+				$("#"+elementId).attr('class','tagStyle');
+				switch(elementType){
+					case 'txtbox':
+						$("#"+elementId).html("<input type= 'text' name='"+elementId+"'>");
+						//alert("This is TextBox");
+						break;
+					case 'btn':
+						$("#"+elementId).html("<input type= 'button' name='"+elementId+"' value='button'>");
+						//alert("This is Button");
+					break;
+					case 'lbl':
+						$("#"+elementId).html("<label >This is label</label>");
+						//alert("This is Label");
+					break;
+					case 'rdbtn':
+						$("#"+elementId).html("Name <input type= 'radio' name='"+elementId+"'>");
+						//alert("This is Radio Button");
+						break;
+					case 'chbox':
+						$("#"+elementId).html("Name <input type= 'checkbox' name='"+elementId+"'>");
+						//alert("This is CheckBox");
+						break;
+					case 'txtarea':
+						$("#"+elementId).html("<textarea ></textarea>");
+						//alert("This is TextArea");
+						break;
+					case 'paragraph':
+						$("#"+elementId).html("<p>This is a Paragraph Text</p>");
+						break;
+					default: alert(elementType);
+				}
+			});
+
+			// $(".tagStyle").editable(function (){
+			// 	alert("Id is:"+$(this).attr('id'));
+			// });
+			i++;
+			}
+		});
+
+	});
+</script>
+</head>
+<body>
+
+<div id = "elements">
+	<div id="txtbox" class="item">
+		<label>This is textbox</label>
+	</div>
+	<div id="btn" class="item">
+		<label>This is Button</label>
+	</div>
+	<div id="lbl" class="item">
+		<label>This is label</label>
+	</div>
+	<div id="rdbtn" class="item">
+		<label>This is radio button</label>
+	</div>
+	<div id="chbox" class="item">
+		<label>This is checkbox</label>
+	</div>
+	<div id="txtarea" class="item">
+		<label>This is textarea</label>
+	</div>
+	<div id='paragraph' class='item'>
+		<label>This is paragraph.</label>
+	</div>
+</div>
+
+<div id="containment-wrapper"></div>
+</body>
+</html>

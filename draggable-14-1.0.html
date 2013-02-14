@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>jQuery UI Draggable - Constrain movement</title>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.0/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.8.3.js"></script>
+<script src="http://code.jquery.com/ui/1.10.0/jquery-ui.js"></script>
+<!-- <script src="http://code.jquery.com/jquery-latest.js"></script> -->
+<style>
+#elements {
+	width: 95%;
+	height:200px;
+	border:2px solid #ccc;
+	padding: 10px;
+}
+#containment-wrapper {
+	width: 95%;
+	height:400px;
+	border:2px solid #ccc;
+	padding: 10px;
+}
+.item {
+	width: 155px;
+	height:auto;
+	border:2px solid #ccc;
+	cursor: move ;
+}
+
+.tag {
+	width: 155px;
+	height:auto;
+	border:2px solid #ccc;
+	/*cursor: move ;*/
+	padding: 0.5em;
+}
+
+.tagStyle{
+	position: absolute;
+}
+
+</style>
+<script>
+	var i =1;
+	var domtype='';
+	var elementData ='';
+	$(function() {
+
+		$(".item").draggable({revert:true});
+		$("#containment-wrapper").droppable({
+			accept: ".item",
+			activeClass: "ui-state-hover",
+			hoverClass: "ui-state-active",
+			drop: function( event, ui ) {
+				domtype = ui.draggable.attr('id');
+				data = "";
+				switch(domtype){
+					case 'txtbox':
+						//alert("This is TextBox");
+						data = "<input type='text' name='"+domtype+i+"'>";
+						break;
+					case 'btn':
+						//alert("This is Button");
+						data = "<input type='button' name='"+domtype+i+"'>";
+						break;
+					case 'lbl':
+						//alert("This is Label");
+						data = "<label>Label"+i+"</label>";
+						break;
+					case 'rdbtn':
+						//alert("This is Radio Button");
+						data = "Name :<input type='radio' name='"+domtype+i+"'>";
+						break;
+					case 'chbox':
+						//alert("This is CheckBox");
+						data = "Name :<input type='checkbox' name='"+domtype+i+"'>";
+						break;
+					case 'txtarea':
+						//alert("This is TextArea");
+						data = "<textarea></textarea>";
+						break;
+					case 'paragraph':
+						//alert("This is Paragraph");
+						data = "<p>This is Paragraph Text</p>"
+						break;
+					default : alert("Default " + domtype);
+				}
+			$(this).append("<div id ="+domtype+i+">"+data+"</div>");
+			$("#"+domtype+i).draggable({containment: "#containment-wrapper"}).resizable();
+			$("#"+domtype+i).addClass("tag");
+			i++;
+
+			$('.tag').dblclick(function () {
+				console.log($(this).attr('id'));
+				var textData = $(this).text().trim();
+				console.log(textData);
+				var elementId = $(this).attr('id');
+				elementData = $(this).html();
+				// $('#'+elementId).load("loadfile.php",data:data);
+				$.post("loadfile.php",
+						{data:textData},
+					function (resultData, textResult) {
+						$('#'+elementId).html(resultData);
+						$('#tagData').focus();
+						// $('#containment-wrapper').attr('disabled', 'disabled');
+						// $('#containment-wrapper').attr('disabled', true);
+						$(body).attr('disabled', true);
+					});
+
+			});
+
+			}
+		});
+
+	});
+</script>
+</head>
+<body>
+
+<div id = "elements">
+	<div id="txtbox" class="item">
+		<label>This is textbox</label>
+	</div>
+	<div id="btn" class="item">
+		<label>This is Button</label>
+	</div>
+	<div id="lbl" class="item">
+		<label>This is label</label>
+	</div>
+	<div id="rdbtn" class="item">
+		<label>This is radio button</label>
+	</div>
+	<div id="chbox" class="item">
+		<label>This is checkbox</label>
+	</div>
+	<div id="txtarea" class="item">
+		<label>This is textarea</label>
+	</div>
+	<div id='paragraph' class='item'>
+		<label>This is paragraph.</label>
+	</div>
+</div>
+
+<div id="containment-wrapper"></div>
+</body>
+</html>
